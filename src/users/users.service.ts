@@ -31,7 +31,6 @@ export class UsersService {
     } else if (orderBy === OrderBy.giftCount) {
       return await this.userModel
         .aggregate([
-          { $addFields: { giftCount: { $size: '$gifts' } } },
           {
             $lookup: {
               from: 'gifts',
@@ -40,8 +39,9 @@ export class UsersService {
               as: 'gifts',
             },
           },
+          { $addFields: { giftCount: { $size: '$gifts' } } },
           { $sort: { giftCount: -1 } },
-          { $project: { giftCount: 0 } },
+          { $unset: 'giftCount' },
         ])
         .exec();
     }
