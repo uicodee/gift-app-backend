@@ -8,9 +8,8 @@ import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    // MongooseModule.forRoot('mongodb://localhost/gift'),
     MongooseModule.forRoot(
-      'mongodb+srv://uicodee:vAisiSbeaU6CBl0I@cluster0.usfyw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+      'mongodb+srv://uicodee:vAisiSbeaU6CBl0I@cluster0.usfyw.mongodb.net?retryWrites=true&w=majority&appName=Cluster0',
     ),
     UsersModule,
     GiftsModule,

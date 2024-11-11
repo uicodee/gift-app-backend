@@ -4,6 +4,7 @@ import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { BuyGiftDto } from './dto/buy-gift.dto';
@@ -11,6 +12,7 @@ import { Gift } from './schemas/gift.schema';
 import { TelegramAuth } from 'src/auth/guards/auth.guard';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { UserDocument } from 'src/users/schemas/user.schema';
+import { InvoiceCreatedDto } from './dto/invoice.dto';
 
 @ApiTags('gifts')
 @ApiBearerAuth('Authorization')
@@ -29,8 +31,10 @@ export class GiftsController {
   @UseGuards(TelegramAuth)
   @Post('buy')
   @ApiOkResponse({ type: Gift })
-  async buy(@Body() buyGiftDto: BuyGiftDto, @CurrentUser() user: UserDocument) {
-    return await this.giftsService.buy(buyGiftDto, user);
+  @ApiResponse({ type: InvoiceCreatedDto })
+  async buy(@Body() buyGiftDto: BuyGiftDto) {
+    const gift = await this.giftsService.findOne(buyGiftDto.gift);
+    return await this.giftsService.createInvoice(gift.currency, gift.price);
   }
 
   @UseGuards(TelegramAuth)

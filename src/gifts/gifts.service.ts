@@ -7,7 +7,7 @@ import { BuyGiftDto } from './dto/buy-gift.dto';
 import { UsersService } from 'src/users/users.service';
 import { ActionsService } from 'src/actions/actions.service';
 import { ActionType } from 'src/actions/dto/action.enum';
-import { User, UserDocument } from 'src/users/schemas/user.schema';
+import { UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class GiftsService {
@@ -40,5 +40,18 @@ export class GiftsService {
 
   async findOne(id: string): Promise<GiftDocument> {
     return await this.giftModel.findOne({ _id: id });
+  }
+
+  async createInvoice(currency: string, amount: number) {
+    const CryptoBotAPI = require('crypto-bot-api');
+    const client = new CryptoBotAPI(
+      '286402:AA5Kpc9yA5jGC4MaZxfcaqIQtbU5kd6vlkv',
+    );
+    const invoice = await client.createInvoice({
+      amount: amount,
+      asset: currency,
+    });
+
+    return { url: invoice.miniAppPayUrl };
   }
 }
