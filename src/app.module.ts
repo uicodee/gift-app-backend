@@ -14,7 +14,7 @@ import { BotModule } from './bot/bot.module';
       'mongodb+srv://uicodee:vAisiSbeaU6CBl0I@cluster0.usfyw.mongodb.net?retryWrites=true&w=majority&appName=Cluster0',
     ),
     TelegrafModule.forRoot({
-      token: '7632034749:AAE6K5tudmansQVaH8W2SXT1CwIo_HIXUA0',
+      token: '7632034749:AAGbVUeE9w52iXQ7sekBEB2Lk4kB8alpuVM',
     }),
     UsersModule,
     GiftsModule,

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
+import { CurrencyType } from '../dto/currency.enum';
 
 export type GiftDocument = Gift & Document;
 
@@ -22,7 +23,7 @@ export class Gift {
   @Prop({ required: true })
   price: number;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, enum: CurrencyType })
   @Prop({ required: true })
   currency: string;
 
