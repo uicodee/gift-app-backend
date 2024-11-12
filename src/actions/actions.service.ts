@@ -15,6 +15,15 @@ export class ActionsService {
     }).save();
   }
 
+  async findGiftAll(giftId: string): Promise<Action[]> {
+    return await this.actionModel
+      .find({ gift: giftId })
+      .populate('user')
+      .populate('gift')
+      .populate('recipient')
+      .exec();
+  }
+
   async findAll(): Promise<Action[]> {
     return await this.actionModel
       .find()

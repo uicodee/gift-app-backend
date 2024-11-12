@@ -14,7 +14,7 @@ export class UsersService {
     return await new this.userModel(createUserDto).save();
   }
 
-  async createGift(userId: string, giftId: string): Promise<UserDocument> {
+  async createUserGift(userId: string, giftId: string): Promise<UserDocument> {
     return await this.userModel.findByIdAndUpdate(
       userId,
       {
@@ -24,8 +24,30 @@ export class UsersService {
     );
   }
 
+  async createGift(userId: string, giftId: string): Promise<UserDocument> {
+    return await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: { purchasedGifts: giftId },
+      },
+      { new: true },
+    );
+  }
+
+  async deletePurchasedGift(
+    userId: string,
+    giftId: string,
+  ): Promise<UserDocument> {
+    return await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { purchasedGifts: giftId },
+      },
+      { new: true },
+    );
+  }
+
   async findAll(orderBy: OrderBy): Promise<UserDocument[]> {
-    console.log(orderBy);
     if (orderBy === OrderBy.default) {
       return this.userModel.find().populate('gifts').exec();
     } else if (orderBy === OrderBy.giftCount) {
@@ -51,6 +73,7 @@ export class UsersService {
     return await this.userModel
       .findById(id)
       .populate({ path: 'gifts', model: Gift.name })
+      .populate({ path: 'purchasedGifts', model: Gift.name })
       .exec();
   }
 
@@ -58,6 +81,7 @@ export class UsersService {
     return await this.userModel
       .findOne({ telegramId: telegramId })
       .populate({ path: 'gifts', model: Gift.name })
+      .populate({ path: 'purchasedGifts', model: Gift.name })
       .exec();
   }
 }

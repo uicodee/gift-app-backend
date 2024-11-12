@@ -16,5 +16,6 @@ import { AuthModule } from 'src/auth/auth.module';
   ],
   controllers: [GiftsController],
   providers: [GiftsService],
+  exports: [GiftsService],
 })
 export class GiftsModule {}

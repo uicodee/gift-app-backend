@@ -30,6 +30,10 @@ export class User {
   @ApiProperty({ required: false, type: [Gift] })
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Gift' }] })
   gifts: Types.Array<Gift>;
+
+  @ApiProperty({ required: false, type: [Gift] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Gift' }] })
+  purchasedGifts: Types.Array<Gift>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

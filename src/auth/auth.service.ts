@@ -3,7 +3,7 @@ import { parse, validate, type InitData } from '@telegram-apps/init-data-node';
 
 @Injectable()
 export class AuthService {
-  private readonly token = '7632034749:AAE6K5tudmansQVaH8W2SXT1CwIo_HIXUA0';
+  private readonly token = '7632034749:AAGbVUeE9w52iXQ7sekBEB2Lk4kB8alpuVM';
 
   getInitData(initData: InitData | undefined): InitData {
     if (!initData) {

@@ -1,21 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { ActionType } from './action.enum';
 
 export class CreateActionDto {
-  @ApiProperty({ required: true })
-  @IsString()
-  user: string;
+  @ApiProperty()
+  @IsEnum(ActionType)
+  actionType: ActionType;
 
   @ApiProperty({ required: true })
   @IsString()
   gift: string;
 
-  @ApiProperty({ required: false })
-  @IsString()
-  recipient?: string;
+  @ApiProperty({ required: true })
+  @IsMongoId()
+  user: string;
 
-  @ApiProperty()
-  @IsEnum(ActionType)
-  actionType: ActionType;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsMongoId()
+  recipient?: string;
 }

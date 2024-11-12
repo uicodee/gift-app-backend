@@ -1,15 +1,13 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateGiftDto } from './dto/create-gift.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Gift, GiftDocument } from './schemas/gift.schema';
 import { Model } from 'mongoose';
-import { BuyGiftDto } from './dto/buy-gift.dto';
 import { UsersService } from 'src/users/users.service';
 import { ActionsService } from 'src/actions/actions.service';
-import { ActionType } from 'src/actions/dto/action.enum';
+import { SendGiftDto } from './dto/buy-gift.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { InvoiceCreatedDto } from './dto/invoice.dto';
+import { ActionType } from 'src/actions/dto/action.enum';
 
 export interface InvoiceResponse {
   ok: boolean;
@@ -44,17 +42,25 @@ export class GiftsService {
     return new this.giftModel(createGiftDto).save();
   }
 
-  async buy(buyGiftDto: BuyGiftDto, user: UserDocument) {
-    const gift = await this.findOne(buyGiftDto.gift);
-    if (!gift) {
-      throw new HttpException('Gift not found', 404);
-    }
+  async send(sendGiftDto: SendGiftDto, user: UserDocument) {
+    await this.userService.deletePurchasedGift(user.id, sendGiftDto.gift);
+    await this.userService.createUserGift(user.id, sendGiftDto.gift);
     await this.actionService.create({
-      user: String(user._id),
-      gift: String(gift._id),
-      actionType: ActionType.Buy,
+      actionType: ActionType.Send,
+      gift: sendGiftDto.gift,
+      user: user.id,
+      recipient: sendGiftDto.recepient,
     });
-    await this.userService.createGift(String(user._id), String(gift._id));
+    await this.userService.createUserGift(
+      sendGiftDto.recepient,
+      sendGiftDto.gift,
+    );
+    await this.actionService.create({
+      actionType: ActionType.Receive,
+      gift: sendGiftDto.gift,
+      user: user.id,
+      recipient: sendGiftDto.recepient,
+    });
   }
 
   async findAll(): Promise<GiftDocument[]> {
@@ -63,41 +69,5 @@ export class GiftsService {
 
   async findOne(id: string): Promise<GiftDocument> {
     return await this.giftModel.findOne({ _id: id });
-  }
-
-  async createInvoice(
-    currency: string,
-    amount: number,
-  ): Promise<InvoiceCreatedDto | undefined> {
-    const data = JSON.stringify({
-      asset: currency,
-      amount: amount,
-    });
-
-    const config: AxiosRequestConfig = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://pay.crypt.bot/api/createInvoice',
-      headers: {
-        'Crypto-Pay-API-Token': '286402:AA5Kpc9yA5jGC4MaZxfcaqIQtbU5kd6vlkv',
-        'Content-Type': 'application/json',
-      },
-      data: data,
-    };
-
-    try {
-      const response: AxiosResponse<InvoiceResponse> =
-        await axios.request(config);
-
-      if (response.data.ok && response.data.result) {
-        return { url: response.data.result.mini_app_invoice_url };
-      } else {
-        console.error('Failed to create invoice:', response.data);
-        throw new HttpException('Failed to create invoice', 500);
-      }
-    } catch (error) {
-      console.error('Error creating invoice:', error);
-      throw new HttpException('Error creating invoice', 500);
-    }
   }
 }

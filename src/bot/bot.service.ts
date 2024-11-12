@@ -1,5 +1,5 @@
 import { InlineQueryResult } from '@telegraf/types';
-import { Ctx, Start, Update, InlineQuery, On } from 'nestjs-telegraf';
+import { Ctx, Start, Update, InlineQuery } from 'nestjs-telegraf';
 import { Scenes, Telegraf } from 'telegraf';
 
 type Context = Scenes.SceneContext;
@@ -8,43 +8,27 @@ type Context = Scenes.SceneContext;
 export class BotService extends Telegraf<Context> {
   @Start()
   async onStart(@Ctx() ctx: Context) {
-    console.log('start');
-    await ctx.reply('Welcome');
-  }
-
-  @On('photo')
-  async onPhoto(@Ctx() ctx: Context) {
-    // update.message.photo
-    console.log(ctx.message);
-    //     {
-    //   update_id: 77813141,
-    //   message: {
-    //     message_id: 56,
-    //     from: {
-    //       id: 547187822,
-    //       is_bot: false,
-    //       first_name: 'Abduxalilov',
-    //       username: 'uicode',
-    //       language_code: 'ru',
-    //       is_premium: true
-    //     },
-    //     chat: {
-    //       id: 547187822,
-    //       first_name: 'Abduxalilov',
-    //       username: 'uicode',
-    //       type: 'private'
-    //     },
-    //     date: 1731344829,
-    //     photo: [ [Object], [Object] ]
-    //   }
-    // }
-    await ctx.reply('hi');
+    await ctx.replyWithPhoto(
+      'AgACAgQAAxkDAANHZzOSAAEnHoSEs9IZXYkC6vrw_TqkAAKNtjEbtxSkUcVdiVMviSmSAQADAgADeQADNgQ',
+      {
+        caption: '🎁 Here you can buy and send gifts to your friends',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'Open App',
+                web_app: { url: 'https://gift-app-miniapp.vercel.app' },
+              },
+            ],
+          ],
+        },
+      },
+    );
   }
 
   @InlineQuery(/.*/)
   async onInlineQuery(@Ctx() ctx: Context) {
     const query = ctx.inlineQuery.query;
-    console.log(query);
     const results: InlineQueryResult[] = [
       {
         type: 'article',

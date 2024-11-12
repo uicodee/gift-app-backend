@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ActionsService } from './actions.service';
 import { CreateActionDto } from './dto/create-action.dto';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Action } from './schemas/action.schema';
 
 @ApiTags('actions')
 @Controller('actions')
@@ -14,9 +15,11 @@ export class ActionsController {
     return this.actionsService.create(createActionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.actionsService.findAll();
+  @ApiOkResponse({ type: [Action] })
+  @ApiParam({ name: 'id', type: 'string' })
+  @Get(':giftId')
+  findGiftAll(@Param('giftId') giftId: string) {
+    return this.actionsService.findGiftAll(giftId);
   }
 
   @ApiParam({ name: 'id', type: 'string' })
