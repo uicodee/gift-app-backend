@@ -28,7 +28,7 @@ export class GiftsController {
   //   return await this.giftsService.create(createGiftDto);
   // }
 
-  @UseGuards(TelegramAuth)
+  // @UseGuards(TelegramAuth)
   @Post('buy')
   @ApiOkResponse({ type: Gift })
   @ApiResponse({ type: InvoiceCreatedDto })
